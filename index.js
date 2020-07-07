@@ -20,6 +20,6 @@ app.use(graphqlEndpoint, bodyParser.json(), graphqlExpress({ schema }));
 app.use('/graphiql', graphiqlExpress({ endpointURL: graphqlEndpoint }));
 
 // Add { force: true } sync to drop tables on restart
-models.sequelize.sync().then(() => {
+models.sequelize.sync({ force: true }).then(() => {
   app.listen(8080);
 });

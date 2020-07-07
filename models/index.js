@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 
 const sequelize = new Sequelize('chill', 'nguyengiang', 'postgres', {
   dialect: 'postgres',
+  underscored: true,
 });
 const models = {
   User: sequelize.import('./user'),
