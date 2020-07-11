@@ -8,6 +8,9 @@ import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
 
 import models from './models';
 
+const SECRET = 'oMqUT2jQCG2Sy6KPrzl4BWVbL5pVHSyc';
+const SECRET2 = 'LMXKhayiCr0oTWSwk6xPzzZiOzfFFGpe';
+
 const typeDefs = mergeTypes(fileLoader(path.join(__dirname, './schemas')));
 
 const resolvers = mergeResolvers(
@@ -35,6 +38,8 @@ app.use(
       user: {
         id: 1,
       },
+      SECRET,
+      SECRET2,
     },
   })
 );
