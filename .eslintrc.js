@@ -14,6 +14,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    'prettier/prettier': 0,
+    'prettier/prettier': 1,
   },
 };
