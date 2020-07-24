@@ -6,15 +6,17 @@ export default `
     members: [User!]!
     channels: [Channel!]!
   }
+
   type CreateTeamResponse {
     ok: Boolean!
-    team: Team!
+    team: Team
     errors: [Error!]
   }
+
   type Query {
     allTeams: [Team!]!
   }
-  
+
   type VoidResponse {
     ok: Boolean!
     errors: [Error!]
@@ -22,6 +24,6 @@ export default `
 
   type Mutation {
     createTeam(name: String!): CreateTeamResponse!
-    addTeamMember(email: String, teamId: Int!): VoidResponse!
+    addTeamMember(email: String!, teamId: Int!): VoidResponse!
   }
 `;
