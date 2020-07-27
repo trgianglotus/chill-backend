@@ -86,7 +86,7 @@ app.use(
 const server = createServer(app);
 
 // Add { force: true } sync to drop tables on restart
-models.sequelize.sync({ force: true }).then(() => {
+models.sequelize.sync({ force: false }).then(() => {
   server.listen(8080, () => {
     // eslint-disable-next-line no-new
     new SubscriptionServer(

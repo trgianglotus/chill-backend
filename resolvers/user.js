@@ -19,6 +19,8 @@ export default {
     me: requiresAuth.createResolver((parent, args, { models, user }) =>
       models.User.findOne({ where: { id: user.id } })
     ),
+    getUser: (parent, { userId }, { models }) =>
+      models.User.findOne({ where: { id: userId } }),
   },
   Mutation: {
     login: (parent, { email, password }, { models, SECRET, SECRET2 }) =>
