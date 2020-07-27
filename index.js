@@ -112,6 +112,8 @@ app.use(
   }))
 );
 
+app.use('/files', express.static('files'));
+
 app.use(
   '/graphiql',
   graphiqlExpress({
