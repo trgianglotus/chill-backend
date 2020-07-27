@@ -42,13 +42,15 @@ export default {
     createDirectMessage: requiresAuth.createResolver(
       async (parent, args, { models, user }) => {
         try {
+          console.log(args, user);
+          // { receiverId: 2, text: 'Hey dude', teamId: 1 } { id: 1, username: 'sen' }
+          // { receiverId: 3, text: 'hey jack!', teamId: 1 } { id: 1, username: 'sen' }
           const directMessage = await models.DirectMessage.create({
             ...args,
             senderId: user.id,
           });
 
-          console.log(args, user);
-
+          console.log('here2');
           // const asyncFunc = async () => {
           //   const currentUser = await models.User.findOne({
           //     where: {
