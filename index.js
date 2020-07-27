@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
+import formidable from 'formidable';
 import { graphqlExpress, graphiqlExpress } from 'apollo-server-express';
 import { makeExecutableSchema } from 'graphql-tools';
 import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
@@ -56,6 +57,41 @@ const addUser = async (req, res, next) => {
   next();
 };
 
+const uploadDir = 'files';
+
+const fileMiddleware = (req, res, next) => {
+  if (!req.is('multipart/form-data')) {
+    return next();
+  }
+
+  const form = formidable.IncomingForm({
+    uploadDir,
+  });
+
+  form.parse(req, (error, { operations }, files) => {
+    if (error) {
+      console.log(error);
+    }
+
+    const document = JSON.parse(operations);
+
+    if (Object.keys(files).length) {
+      const {
+        file: { type, path: filePath },
+      } = files;
+      console.log(type);
+      console.log(filePath);
+      document.variables.file = {
+        type,
+        path: filePath,
+      };
+    }
+
+    req.body = document;
+    next();
+  });
+};
+
 app.use(addUser);
 
 const graphqlEndpoint = '/graphql';
@@ -64,6 +100,7 @@ const graphqlEndpoint = '/graphql';
 app.use(
   graphqlEndpoint,
   bodyParser.json(),
+  fileMiddleware,
   graphqlExpress((req) => ({
     schema,
     context: {
