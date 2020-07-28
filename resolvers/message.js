@@ -10,9 +10,7 @@ export default {
     newChannelMessage: {
       subscribe: requiresTeamAccess.createResolver(
         withFilter(
-          () => {
-            return pubsub.asyncIterator(NEW_CHANNEL_MESSAGE);
-          },
+          () => pubsub.asyncIterator(NEW_CHANNEL_MESSAGE),
           (payload, args) => payload.channelId === args.channelId
         )
       ),
@@ -20,7 +18,7 @@ export default {
   },
   Message: {
     url: (parent) =>
-      parent.url ? `http://localhost:8080/${parent.url}` : parent.url,
+      parent.url ? `http://localhost:8081/${parent.url}` : parent.url,
     user: ({ user, userId }, args, { models }) => {
       if (user) {
         return user;
@@ -31,11 +29,27 @@ export default {
   },
   Query: {
     messages: requiresAuth.createResolver(
-      async (parent, { channelId }, { models }) =>
-        models.Message.findAll(
+      async (parent, { channelId }, { models, user }) => {
+        const channel = await models.Channel.findOne({
+          raw: true,
+          where: { id: channelId },
+        });
+
+        if (!channel.public) {
+          const member = await models.PCMember.findOne({
+            raw: true,
+            where: { channelId, userId: user.id },
+          });
+          if (!member) {
+            throw new Error('Not Authorized');
+          }
+        }
+
+        return models.Message.findAll(
           { order: [['created_at', 'ASC']], where: { channelId } },
           { raw: true }
-        )
+        );
+      }
     ),
   },
   Mutation: {

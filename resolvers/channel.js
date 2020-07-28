@@ -10,7 +10,6 @@ export default {
             { where: { teamId: args.teamId, userId: user.id } },
             { raw: true }
           );
-
           if (!member.admin) {
             return {
               ok: false,
@@ -24,14 +23,34 @@ export default {
             };
           }
 
-          const channel = await models.Channel.create(args);
+          const response = await models.sequelize.transaction(
+            async (transaction) => {
+              const channel = await models.Channel.create(args, {
+                transaction,
+              });
+              if (!args.public) {
+                const members = args.members.filter((m) => m !== user.id);
+                members.push(user.id);
+                const pcmembers = members.map((m) => ({
+                  userId: m,
+                  channelId: channel.dataValues.id,
+                }));
+                await models.PCMember.bulkCreate(pcmembers, { transaction });
+              }
+              return channel;
+            }
+          );
+
           return {
             ok: true,
-            channel,
+            channel: response,
           };
         } catch (err) {
           console.log(err);
-          return { ok: false, errors: formatErrors(err, models) };
+          return {
+            ok: false,
+            errors: formatErrors(err, models),
+          };
         }
       }
     ),
