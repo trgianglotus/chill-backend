@@ -18,7 +18,7 @@ export default {
   },
   Message: {
     url: (parent) =>
-      parent.url ? `http://localhost:8080/${parent.url}` : parent.url,
+      parent.url ? `http://localhost:8081/${parent.url}` : parent.url,
     user: ({ user, userId }, args, { models }) => {
       if (user) {
         return user;
@@ -29,7 +29,7 @@ export default {
   },
   Query: {
     messages: requiresAuth.createResolver(
-      async (parent, { channelId }, { models, user }) => {
+      async (parent, { offset, channelId }, { models, user }) => {
         const channel = await models.Channel.findOne({
           raw: true,
           where: { id: channelId },
@@ -46,7 +46,12 @@ export default {
         }
 
         return models.Message.findAll(
-          { order: [['created_at', 'ASC']], where: { channelId } },
+          {
+            order: [['created_at', 'ASC']],
+            where: { channelId },
+            limit: 35,
+            offset,
+          },
           { raw: true }
         );
       }
