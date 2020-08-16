@@ -10,9 +10,11 @@ import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
 import { createServer } from 'http';
 import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
+import DataLoader from 'dataloader';
 
 import models from './models';
 import { refreshTokens } from './auth';
+import { channelBatcher } from './batchFunction';
 
 const SECRET = 'oMqUT2jQCG2Sy6KPrzl4BWVbL5pVHSyc';
 const SECRET2 = 'LMXKhayiCr0oTWSwk6xPzzZiOzfFFGpe';
@@ -108,6 +110,9 @@ app.use(
       user: req.user,
       SECRET,
       SECRET2,
+      channelLoader: new DataLoader((ids) =>
+        channelBatcher(ids, models, req.user)
+      ),
     },
   }))
 );
