@@ -14,7 +14,7 @@ import DataLoader from 'dataloader';
 
 import getModels from './models';
 import { refreshTokens } from './auth';
-import { channelBatcher } from './batchFunction';
+import { channelBatcher } from './batchFunctions';
 
 const SECRET = 'oMqUT2jQCG2Sy6KPrzl4BWVbL5pVHSyc';
 const SECRET2 = 'LMXKhayiCr0oTWSwk6xPzzZiOzfFFGpe';
@@ -31,6 +31,7 @@ const schema = makeExecutableSchema({
 });
 
 const app = express();
+
 app.use(cors('*'));
 
 const uploadDir = 'files';
@@ -131,7 +132,7 @@ getModels().then((models) => {
     '/graphiql',
     graphiqlExpress({
       endpointURL: graphqlEndpoint,
-      subscriptionsEndpoint: 'ws://localhost:8081/subscriptions',
+      subscriptionsEndpoint: 'ws://localhost:8080/subscriptions',
     })
   );
 
