@@ -2,3 +2,4 @@
 dump.sql 
 files
 dist
+pgdata
