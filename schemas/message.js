@@ -16,7 +16,7 @@ export default `
     newChannelMessage(channelId: Int!): Message!
   }
   type Query {
-    messages(offset: Int!, channelId: Int!): [Message!]!
+    messages(cursor: String, channelId: Int!): [Message!]!
   }
   type Mutation {
     createMessage(channelId: Int!, text: String, file: File): Boolean!
